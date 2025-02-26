@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using ExpenseTracker.Core.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -26,11 +28,22 @@ public class AddSettings : CommandSettings
     }
 }
 
-public sealed class AddCommand : Command<AddSettings>
+public sealed class AddCommand([NotNull] IExpenseService _expenseService) : Command<AddSettings>
 {
     public override int Execute(CommandContext context, AddSettings settings)
     {
-        Console.WriteLine($"Adding expense: {settings.Description} for {settings.Amount}");
-        return 0;
+        ServiceResponse response = _expenseService
+            .AddExpense(settings.Description, settings.Amount);
+
+        if (response.Success)
+        {
+            AnsiConsole.MarkupLine($"[green]Expense added successfully![/]");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[red]Failed to add expense: {response.ErrorMessage}[/]");
+        }
+
+        return response.Success ? 0 : 1;
     }
 }
