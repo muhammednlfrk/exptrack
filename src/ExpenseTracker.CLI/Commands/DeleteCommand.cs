@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using ExpenseTracker.Core;
 using ExpenseTracker.Core.Services;
@@ -8,16 +9,18 @@ namespace ExpenseTracker.CLI.Commands;
 
 public class DeleteSettings : CommandSettings
 {
+    [Description("The ID of the expense to delete.")]
     [CommandArgument(0, "<ID>")]
     public required int Id { get; set; }
 
+    [Description("Delete the expense permanently.")]
     [CommandOption("-f|--force")]
     public bool Forced { get; set; }
 }
 
 public class DeleteCommand([NotNull] IExpenseService _expenseService) : Command<DeleteSettings>
 {
-    public override int Execute(CommandContext context, DeleteSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] DeleteSettings settings)
     {
         ServiceResponse<bool> response;
         if (settings.Forced)
@@ -31,12 +34,12 @@ public class DeleteCommand([NotNull] IExpenseService _expenseService) : Command<
 
         if (response.Success)
         {
-            AnsiConsole.MarkupLine($"[green]Expense with ID {settings.Id} deleted successfully[/]");
+            AnsiConsole.MarkupLine($"Expense with ID {settings.Id} deleted successfully.");
             return 0;
         }
         else
         {
-            AnsiConsole.MarkupLine($"[red]Failed to delete expense with ID {settings.Id}[/]");
+            AnsiConsole.MarkupLine($"[bold red]Error:[/] {response.ErrorMessage}");
             return 1;
         }
     }

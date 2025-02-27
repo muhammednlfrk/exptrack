@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using ExpenseTracker.Core;
 using ExpenseTracker.Core.Services;
@@ -8,22 +9,26 @@ namespace ExpenseTracker.CLI.Commands;
 
 public class ListSettings : CommandSettings
 {
+    [Description("Filter by ID.")]
     [CommandOption("-i|--id <ID>")]
     public int? Id { get; set; }
 
-    [CommandOption("--day <DAY>")]
+    [Description("Filter by day.")]
+    [CommandOption("-d|--day <DAY>")]
     public int? Day { get; set; }
 
-    [CommandOption("--month <MONTH>")]
+    [Description("Filter by month.")]
+    [CommandOption("-m|--month <MONTH>")]
     public int? Month { get; set; }
 
-    [CommandOption("--year <YEAR>")]
+    [Description("Filter by year.")]
+    [CommandOption("-y|--year <YEAR>")]
     public int? Year { get; set; }
 }
 
 public sealed class ListCommand([NotNull] IExpenseService _expenseService) : Command<ListSettings>
 {
-    public override int Execute(CommandContext context, ListSettings settings)
+    public override int Execute([NotNull] CommandContext context, [NotNull] ListSettings settings)
     {
         ServiceResponse<IEnumerable<ExpenseEntity>> response = _expenseService.ListExpenses(settings.Day, settings.Month, settings.Year);
         if (response.Success)
@@ -69,7 +74,7 @@ public sealed class ListCommand([NotNull] IExpenseService _expenseService) : Com
         }
         else
         {
-            AnsiConsole.MarkupLine($"[red]{response.ErrorMessage}[/]");
+            AnsiConsole.MarkupLine($"[bold red]Error:[/] {response.ErrorMessage}");
         }
 
         return response.Success ? 0 : 1;

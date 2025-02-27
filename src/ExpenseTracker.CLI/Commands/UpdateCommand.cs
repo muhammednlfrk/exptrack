@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using ExpenseTracker.Core;
 using ExpenseTracker.Core.Services;
@@ -8,12 +9,15 @@ namespace ExpenseTracker.CLI.Commands;
 
 public class UpdateSettings : CommandSettings
 {
+    [Description("The ID of the expense to update.")]
     [CommandArgument(0, "<ID>")]
     public int Id { get; set; }
 
+    [Description("The description of the expense.")]
     [CommandOption("-d|--description <DESCRIPTION>")]
     public string? Description { get; set; }
 
+    [Description("The amount of the expense.")]
     [CommandOption("-a|--amount <AMOUNT>")]
     public float? Amount { get; set; }
 
