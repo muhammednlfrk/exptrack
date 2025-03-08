@@ -398,3 +398,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Debian instakker files from build outputs
+debian/usr/*
+*.deb
